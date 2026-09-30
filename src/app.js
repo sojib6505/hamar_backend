@@ -25,19 +25,29 @@ import errorHandler from './middleware/errorMiddleware.js'
 
 const app = express()
 
+const allowedOrigins = new Set([
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://hamar-ui.vercel.app',
+  ...(process.env.CLIENT_URL || '').split(',').map((origin) => origin.trim()).filter(Boolean),
+  ...(process.env.CORS_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean),
+])
+
 // ─── Security Middleware ─────────────────────────────────────────────────────
 
 // Helmet sets sensible security-related HTTP response headers.
 app.use(helmet())
 
-// CORS: Allow requests only from the configured frontend origin.
-// In development this is http://localhost:5173 (Vite default).
+// CORS: Echo only origins present in the approved allowlist.
 app.use(
   cors({
-    origin: process.env.CLIENT_URL ,
+    origin: (origin, callback) => {
+      callback(null, origin && allowedOrigins.has(origin) ? origin : false)
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
+    optionsSuccessStatus: 204,
   })
 )
 

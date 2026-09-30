@@ -26,12 +26,16 @@ import { categories } from '../../hamar_ui/src/data/categories.js'
 import { brands } from '../../hamar_ui/src/data/brands.js'
 import { products } from '../../hamar_ui/src/data/products.js'
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/hamar'
+const MONGODB_URI = process.env.MONGODB_URI
 
 async function seed() {
   console.log('🌱 Starting HAMAR database seed...')
 
   try {
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is required.')
+    }
+
     await mongoose.connect(MONGODB_URI)
     console.log(' Connected to MongoDB:', mongoose.connection.host)
 
@@ -138,7 +142,8 @@ async function seed() {
 
     process.exit(0)
   } catch (error) {
-    console.error('❌ Seeding failed:', error)
+    const message = MONGODB_URI ? error.message.replace(MONGODB_URI, '[redacted MongoDB URI]') : error.message
+    console.error('❌ Seeding failed:', message)
     process.exit(1)
   }
 }

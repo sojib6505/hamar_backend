@@ -148,6 +148,7 @@ Fill in your configuration:
 PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
+CORS_ORIGINS=http://localhost:5174,https://hamar-ui.vercel.app
 
 # MongoDB Connection String (Atlas or Local)
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/hamar?retryWrites=true&w=majority
@@ -291,7 +292,7 @@ Product, category, and brand management uses the admin-protected `POST`, `PUT`, 
 - **Server-Side Price Calculation**: Total price and delivery fee are recalculated on the server during checkout to prevent client-side price tampering.
 - **Helmet**: Secures HTTP response headers against clickjacking, MIME sniffing, and cross-site scripting.
 - **Rate Limiting**: Throttles incoming requests to 200 requests per 15-minute window per IP.
-- **CORS Whitelisting**: Restricted to `CLIENT_URL` (default `http://localhost:5173`).
+- **CORS Whitelisting**: Allows the HAMAR local and production frontend origins, plus origins configured through `CLIENT_URL` and optional comma-separated `CORS_ORIGINS`.
 - **Role Verification**: Admin permissions are strictly verified against the database record, never trusted from client input.
 - **Data Validation & Sanitization**: Incoming request parameters are sanitized against regex injection and validated.
 
